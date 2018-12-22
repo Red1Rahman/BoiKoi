@@ -1,0 +1,97 @@
+{% extends 'main/base.html' %}
+{% block title %}Wall{% endblock %}
+{% block body %}
+
+<html lang="en">
+<head>
+  <title>Wall</title>
+   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+   <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+   <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <style>
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 75%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .active, .collapsible:hover {
+        background-color: #555;
+    }
+
+    .content {
+        padding: 0 18px;
+        display: none;
+        width:75%;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: #f1f1f1;
+    }
+    .collapsible:after {
+        content: '\02795'; /* Unicode character for "plus" sign (+) */
+        font-size: 13px;
+        color: white;
+        float: right;
+        margin-left: 5px;
+    }
+
+    .active:after {
+        content: "\2796";
+    }
+    name {
+        color: blue;
+    }
+    </style>
+</head>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-2">
+    	<a href="{% url 'main:wall' user_profile.user.username %}"><img src={{user.profile.profilepic.url}} class="img-circle img-responsive" alt="Cinque Terre"></a>
+        <h4>{{user_profile.user.username}}</h4>
+        <p>{{user_profile.bio}}</p>
+    </div>
+
+    <div class="col-sm-6">
+        <h1>Username: <name>{{ user_profile.user.username }}</name></h1>
+        <h1>Bio: <name>{{ user_profile.bio }}</name></h1>
+        <h1>Address: <name>{{ user_profile.address }}</name></h1>
+        <h1>E-mail: <name>{{ user_profile.user.email }}</name></h1>
+        {% if user_profile.user == request.user %}
+        <a id="editName" href = "{% url 'main:editPage' user_profile.user.username %}"><button type="submit" class="w3-button w3-theme">Edit</button></a>
+        {% else %}
+        <a id="message" href = "#"><button onclick="document.getElementById('id01').style.display='block'" type="submit" class="w3-button w3-theme">Send Message</button></a>
+        <div id="id01" class="w3-modal">
+            <div class="w3-modal-content">
+              <div class="w3-container">
+                <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                    <h5><span style = "opacity:0.6;">Send a new message to {{ user.username }}</span></h5>
+                    <form id = "sendform" action="{% url 'main:messageposter' user.id%}" method="POST" enctype="multipart/form-data">
+                        {%csrf_token%}
+                        <textarea id = "messagefield" class="w3-border w3-padding" name="message" placeholder="Write your message" style="width:100%;" rows = "15"></textarea>
+                        <a href="{% url 'main:message' %}"><button type="submit" class="w3-button w3-theme" style = "background-color: darkgray;"> Send</button></a>
+                    </form>
+              </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+  </div>
+</div>
+
+</script>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,261 @@
+{% extends 'main/base.html' %}
+{% block title %}Wall{% endblock %}
+{% block body %}
+{% load staticfiles %}
+<html lang="en">
+<head>
+  <title>Wall</title>
+   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+   <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+   <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <style>
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 75%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .active, .collapsible:hover {
+        background-color: #555;
+    }
+
+    .content {
+        padding: 0 18px;
+        display: none;
+        width:75%;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: #f1f1f1;
+    }
+    .collapsible:after {
+        content: '\02795'; /* Unicode character for "plus" sign (+) */
+        font-size: 13px;
+        color: white;
+        float: right;
+        margin-left: 5px;
+    }
+
+    .active:after {
+        content: "\2796";
+    }
+    name {
+        color: blue;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-2">
+    	<a href="{% url 'main:profilepage' user.username %}"><img src={{user.profile.profilepic.url}} class="img-circle img-responsive" alt="Cinque Terre"></a>
+        <h4>{{user.username}}</h4>
+        <p>{{user.profile.bio}}</p>
+        {% if user != request.user %}
+            <a id="message1" href = "#"><button onclick="document.getElementById('id011').style.display='block'" type="submit" class="w3-button w3-theme">Send Message</button></a>
+            <div id="id011" class="w3-modal">
+                <div class="w3-modal-content">
+                  <div class="w3-container">
+                    <span onclick="document.getElementById('id011').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                        <h5><span style = "opacity:0.6;">Send a new message to {{ user.username }}</span></h5>
+                        <form id = "sendform" action="{% url 'main:messageposter' user.id%}" method="POST" enctype="multipart/form-data">
+                            {%csrf_token%}
+                            <textarea id = "messagefield" class="w3-border w3-padding" name="message" placeholder="Write your message" style="width:100%;" rows = "15"></textarea>
+                            <a href="{% url 'main:message' %}"><button type="submit" class="w3-button w3-theme" style = "background-color: darkgray;"> Send</button></a>
+                        </form>
+                  </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if denial %}
+        {% for ins in denial %}
+        <div class="w3-container w3-display-container w3-round w3-border w3-theme-border w3-margin-bottom w3-hide-small w3-red">
+            <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright"><i class="fa fa-remove"></i></span>
+            <p><strong>Your request for {{ ins.book }} has been denied</strong></p>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% if success %}
+        {% for ins in success %}
+        <div class="w3-container w3-display-container w3-round w3-border w3-theme-border w3-margin-bottom w3-hide-small w3-pale-green">
+            <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright"><i class="fa fa-remove"></i></span>
+            <p><strong>Your request for {{ ins.book }} has been accepted</strong></p>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% if requested %}
+        <div class="w3-container w3-display-container w3-round w3-border w3-theme-border w3-margin-bottom w3-hide-small w3-aqua">
+            <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright"><i class="fa fa-remove"></i></span>
+            <p><strong>You have unresloved donation requests</strong></p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="col-sm-6">
+        {% if user == request.user %}
+        <div class="w3-row-padding">
+            <div class="w3-col m12">
+              <div class="w3-card w3-round w3-white w3-large">
+                <div class="w3-container w3-padding">
+                  <h6 class="w3-opacity">Make a post</h6>
+                  <form action="{% url 'main:wall' user.username %}" method="POST" enctype="multipart/form-data">{%csrf_token%}
+                      <textarea class="w3-border w3-padding" name="posttitle" placeholder="Give your post a title" style="width:100%" rows = "1"></textarea>
+                      <textarea class="w3-border w3-padding" name="posttext" placeholder="Write your post" style="width:100%" required></textarea>
+                      {{form}}
+                      <button type="submit" class="w3-button w3-theme"><i class="fa fa-pencil"></i>  Post</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% for postitem in post_likes %}
+            <div class="w3-container w3-card w3-light-grey w3-round w3-margin"><br>
+                <img src={{user.profile.profilepic.url}} alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; white-space: pre-wrap; ">
+                <span class="w3-right w3-opacity">{{postitem.0.creationDate}}</span>
+                <h2>{{postitem.0.user.username}}</h2>
+                <hr class="w3-clear">
+                <h3>{{postitem.0.title}}</h3>
+                <p>{{postitem.0.text}}</p>
+                <div>
+                    <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom" onclick="likefunk(this, {{postitem.0.id}})">{% if postitem.1 == 'True' %}<i class="fa fa-thumbs-down"></i> Unlike {{postitem.2}}{% else %}<i class="fa fa-thumbs-up"></i> Like {{postitem.2}}{% endif %} </button>
+                    <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom" onclick="location.href = '{%url 'main:postpage' postitem.0.id%}';" style="float:right;"><!--i class="fa fa-comment"></i--> Go To Post</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-sm-4" >
+    	<div >
+            <button class="collapsible">Give list</button>
+            <div class="content">
+                {% for list_item in gives %}
+                <li>
+                    <a href = "{% url 'main:book' list_item.book.id %}">{{list_item.book.name}}</a>
+                </li>
+                {% endfor %}
+            </div>
+            {% if user == request.user %}
+            <a href = "{% url 'main:addgive' %}"><button type = "button" >Add</button></a>
+            {% endif %}
+        </div>
+        <div>
+            <button class="collapsible">Take list</button>
+            <div class="content">
+                {% for list_item in takes %}
+                    <li>
+                        <a href = "{% url 'main:book' list_item.book.id %}">{{list_item.book.name}}</a>
+                    </li>
+                {% endfor %}
+
+            </div>
+            {% if user == request.user %}
+            <a href = "{% url 'main:addtake' %}"><button type = "button" >Add</button></a>
+            {% endif %}
+        </div>
+        {% if user == request.user %}
+        <button class="collapsible">Notifications</button>
+        <div class="content">
+            {% for list_item in requested %}
+            <li>
+                <a><name>{{list_item.requestor.user.username}}</name> requests for your copy of <name>{{list_item.book.name}}</name></a>
+                <a id="message" href = "#"><button onclick="document.getElementById('id01').style.display='block'" type="submit" class="w3-button w3-theme">See more</button></a>
+                <div id="id01" class="w3-modal">
+                    <div class="w3-modal-content">
+                      <div class="w3-container">
+                        <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                            <h5><span style = "opacity:0.6;">Do you want to donate {{ list_item.book.name }} to {{ list_item.requestor.user.username }} ?</span></h5>
+                            <div style="text-aligh:center">
+                                <a href="{% url 'main:donate' list_item.requestor.user.username list_item.book.id 'YES'%}">Yes</a>
+                                <a href="{% url 'main:donate' list_item.requestor.user.username list_item.book.id 'NO'%}">No</a>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </div>
+        <button class="collapsible">My Requests</button>
+        <div class="content">
+            {% for list_item in myrequests %}
+            <li>
+                <a href = "#">Your request for the copy of <name>{{list_item.book.name}}</name> is still pending</a><br>
+            </li>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <button class="collapsible">Donated Books</button>
+        <div class="content">
+            {% for list_item in donated %}
+            <li>
+                <a>Donated <a href="{% url 'main:book' list_item.book.id %}"><name>{{ list_item.book.name }}</name></a> to <a href="{% url 'main:profilepage' list_item.receiver.user.username %}"><name>{{ list_item.receiver.user.username }}</name></a></a>
+            </li>
+            {% endfor %}
+        </div>
+        <button class="collapsible">Received Books</button>
+        <div class="content">
+            {% for list_item in received %}
+            <li>
+                <a>Received <a href="{% url 'main:book' list_item.book.id %}"><name>{{ list_item.book.name }}</name></a> from <a href="{% url 'main:profilepage' list_item.provider.user.username %}"><name>{{ list_item.provider.user.username }}</name></a></a>
+            </li>
+            {% endfor %}
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function likefunk(e, v){
+            var req = new XMLHttpRequest();
+            var ref = "/main/like/" + String(v) + "/";
+            req.open("POST", ref);
+            req.onload = function(){
+                var data = req.responseText;
+                e.innerHTML = String(data);
+            }
+            req.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+            req.send("");
+        }
+</script>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "block";
+        }
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+    });
+}
+$("document").ready(function(){
+    $('textarea').autoResize();
+});
+</script>
+</body>
+</html>
+{% endblock %}

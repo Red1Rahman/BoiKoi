@@ -1,0 +1,105 @@
+{% extends 'main/base.html' %}
+{% block title %}Hub{% endblock %}
+{% block body %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
+</style>
+<body class="w3-theme-l5">
+
+<!-- Page Container -->
+<div class="w3-container w3-content w3-margin-top" style="max-width:1400px;">
+  <!-- The Grid -->
+  <div class="w3-row">
+
+
+    <!-- left Column -->
+    <div class="w3-col m8">
+
+    {% for postitem in post_likes %}
+        <div class="w3-container w3-card w3-white w3-round w3-margin-bottom w3-margin-right w3-margin-left"><br>
+            <a href="{% url 'main:wall' postitem.0.user.username %}"><img src={{postitem.0.user.profile.profilepic.url}} alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; white-space: pre-wrap; "></a>
+            <span class="w3-right w3-opacity">{{postitem.0.creationDate}}</span>
+            <h2><a href="{% url 'main:wall' postitem.0.user.username %}" style = "text-decoration:none; color: darkolivegreen;">{{postitem.0.user.username}}</a></h2>
+            <hr class="w3-clear">
+            <h3>{{postitem.0.title}}</h3>
+            <p>{{postitem.0.text}}</p>
+            <div>
+                <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom" onclick="likefunk(this, {{postitem.0.id}})">{% if postitem.1 == 'True' %}<i class="fa fa-thumbs-down"></i> Unlike {{postitem.2}}{% else %}<i class="fa fa-thumbs-up"></i> Like {{postitem.2}}{% endif %} </button>
+                <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom" onclick="location.href = '{%url 'main:postpage' postitem.0.id%}';" style="float:right;"><!--i class="fa fa-comment"></i-->Go To Post{% if postitem.3 == 1 %}<span style="opacity:0.5;"> (cont.)</span>{% endif %}</button>
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- End left Column -->
+    </div>
+
+    <!-- right Column -->
+    <div class="w3-col m4">
+      <!-- Profile -->
+      <div class="w3-card w3-round w3-white" style = "height:45vh;">
+        <div class="w3-container" style = "height: 76.5%;">
+         <h4 class="w3-center">Popular Books</h4>
+         <hr>
+         <div class="w3-container"   style = "height: 100%; overflow-y:scroll;">
+         {% for book in booklist %}
+             <li style="font-size:large;"><a href="{% url 'main:book' book.id %}" style = "text-decoration:none; color:darkcyan;">{{book.name}}</a></li>
+         <br>         
+         {% endfor %}     
+         </div>     
+        </div>
+      </div>
+      <br>
+
+      <!-- listings -->
+      <div class="w3-card w3-round w3-white w3-hide-small" style = "height:45vh;">
+        <div class="w3-container"  style = "height:100%">
+          <h5>Recent Listings</h5>
+          <div class="w3-container"   style = "overflow-y:scroll; height:86%">    
+          {% for listing in listings %}
+          {% if listing.mode == "Give" %}
+              <p><a href="{% url 'main:wall' listing.user.username %}" style = "text-decoration:none; color:darkcyan;">{{listing.user.username}}</a> can share <a href="{% url 'main:book' listing.book.id %}" style = "text-decoration:none; color:darkcyan;">{{listing.book.name}}</a></p>
+          {% elif listing.mode == "Take" %}
+              <p><a href="{% url 'main:wall' listing.user.username %}" style = "text-decoration:none; color:darkcyan;">{{listing.user.username}}</a> wants <a href="{% url 'main:book' listing.book.id %}" style = "text-decoration:none; color:darkcyan;">{{listing.book.name}}</a></p>
+          {% endif %}
+          {% endfor %}
+          </div>      
+        </div>
+      </div>
+      <br>
+
+    <!-- End right Column -->
+    </div>
+
+
+  <!-- End Grid -->
+  </div>
+
+<!-- End Page Container -->
+</div>
+<br>
+    
+<script>
+    function likefunk(e, v){
+        var req = new XMLHttpRequest();
+        var ref = "/main/like/" + String(v) + "/";
+        req.open("POST", ref);
+        req.onload = function(){
+            var data = req.responseText;
+            e.innerHTML = String(data);
+        }
+        req.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        req.send("");
+    }
+</script>
+
+
+</body>
+</html>
+
+{% endblock %}

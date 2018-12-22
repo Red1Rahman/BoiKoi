@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome to BoiKoi{% endblock %}</title>
+    {% load staticfiles %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}"/>
+    <script src="https://ajax.google.apis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!--Header-->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="'collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">BoiKoi</a>
+        </div>
+
+        <!--Item-->
+        <div class="collapse navbar-collapse">
+            <u1 class="nav navbar-nav navbar-right">
+                <li class="">
+                    <a href="{% url 'main:signin' %}">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true">&nbsp;Sign-in
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{% url 'main:signup' %}">
+                        <span class="glyphicon glyphicon-user-add" aria-hidden="true"> Sign-Up
+                        </span>
+                    </a>
+                </li>
+            </u1>
+        </div>
+    </div>
+</nav>
+<style>
+.description {
+    font-family: 'Pacifico';
+    font-size: 22px;
+}
+.mySlides {
+    display: none;
+    margin: 35px;
+}
+.name{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+}
+</style>
+<!-- Page content -->
+<div class="w3-content" style="max-width:2000px;margin-top:46px">
+
+  <!-- Automatic Slideshow Images -->
+    <div class="mySlides w3-display-container w3-center">
+        <img src="../../../static/main/images/image1.png" style="width:100%">
+    </div>
+    <div class="mySlides w3-display-container w3-center">
+        <img src="../../../static/main/images/image2.png" style="width:100%">
+    </div>
+    <div class="mySlides w3-display-container w3-center">
+        <img src="../../../static/main/images/image3.png" style="width:100%">
+    </div>
+	<div class="mySlides w3-display-container w3-center">
+        <img src="../../../static/main/images/image4.png" style="width:100%">
+    </div>
+	<div class="mySlides w3-display-container w3-center">
+        <img src="../../../static/main/images/image5.png" style="width:100%">
+    </div>
+
+    <div class="name">
+        <img src="../../../static/main/images/name.png">
+    </div>
+    <desc class="description">
+        <h1>A community based book sharing site that eases the exchange and donation of books among a wide array of people.</h1>
+    </desc>
+</div>
+
+<script>
+var myIndex = 0;
+carousel();
+
+function carousel() {
+    var i;
+    var x = document.getElementsByClassName("mySlides");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";
+    }
+    myIndex++;
+    if (myIndex > x.length) {myIndex = 1}
+    x[myIndex-1].style.display = "block";
+    setTimeout(carousel, 4000);
+}
+</script>

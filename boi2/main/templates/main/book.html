@@ -1,0 +1,137 @@
+{% extends 'main/base.html' %}
+{% block title %}{{ book.name }}{% endblock %}
+{% block body %}
+{% load staticfiles %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}"/>
+<style>
+.column {
+    float: left;
+    width: 50%;
+    padding: 10px;
+}
+
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+</style>
+<body class="w3-light-grey" style="magin:16px;padding:16px">
+
+<!-- Page Container -->
+
+<div class="row">
+    <div class="w3-white w3-text-grey w3-card-4">
+        <div class="col-sm-2">
+
+        </div>
+        <div class="col-sm-6">
+            <h2> {{book.name}} </h2>
+            <a href=""><p><i class="fa w3-margin-right w3-large w3-text-teal"></i>{{book.author.name}}</p></a>
+            <p><i class="fa w3-margin-right w3-large w3-text-teal"></i>{{book.ISBN}}</p>
+        </div>
+    </div>
+    <div class="column" style="width:50%;overflow-y: scroll;">
+        <h2 class="w3-text-grey "><i class="w3-xxlarge w3-text-teal"></i>Users who want to share this book</h2>
+        {% for list_item in givers %}
+        <div class="w3-card-4 w3-hover-shadow" style="width:75%; height:130px">
+            <div>
+                <img src="{{ list_item.user.profile.profilepic.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="height:120px">
+                <a href="{% url 'main:wall' list_item.user.username %}"><h1>{{ list_item.user.username }}</h1></a>
+                <p>{{ list_item.user.profile.bio }}</p>
+                {% if request.user != list_item.user %}
+                If u want to receive this book from {{ list_item.user.username }}<a href="{% url 'main:requestbook' list_item.id list_item.user.username book.id%}"><button type="submit" class="w3-button w3-theme">Send a request</button></a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="column" style="width:50%;overflow-y: scroll;">
+        <h2 class="w3-text-grey"><i class="fa w3-xxlarge w3-text-teal"></i>Users who want this book</h2>
+        <div class="w3-container">
+            {% for list_item in takers %}
+                <div class="w3-card-4" style="width:75%; height:130px">
+                    <div>
+                        <img src="{{ list_item.user.profile.profilepic.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="height:120px">
+                        <a href="{% url 'main:wall' list_item.user.username %}"><h1>{{ list_item.user.username }}</h1></a>
+                        <p>{{ list_item.user.profile.bio }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+</div>
+<!--<div class="w3-content w3-margin-top" style="max-width:1400px;">-->
+
+  <!--&lt;!&ndash; The Grid &ndash;&gt;-->
+  <!--<div class="w3-row-padding">-->
+
+    <!--&lt;!&ndash; Left Column &ndash;&gt;-->
+    <!--<div class="w3-third">-->
+
+      <!--<div class="w3-white w3-text-grey w3-card-4">-->
+        <!--<div class="w3-display-container">-->
+          <!--<img src="https://www.libreture.com/static/images/book-placeholder.png" style="width:25%" alt="Avatar">-->
+          <!--<div class="w3-display-bottomleft w3-container w3-text-black">-->
+            <!--<h2>{{book.name}}</h2>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="w3-container">-->
+          <!--<p><i class="fa w3-margin-right w3-large w3-text-teal"></i>{{book.author.name}}</p>-->
+          <!--<p><i class="fa w3-margin-right w3-large w3-text-teal"></i>{{book.ISBN}}</p>-->
+        <!--</div>-->
+      <!--</div><br>-->
+
+    <!--&lt;!&ndash; End Left Column &ndash;&gt;-->
+    <!--</div>-->
+
+    <!--&lt;!&ndash; Right Column &ndash;&gt;-->
+    <!--<div class="w3-twothird">-->
+
+      <!--<div class="w3-container w3-card w3-white w3-margin-bottom">-->
+        <!--<h2 class="w3-text-grey "><i class="w3-xxlarge w3-text-teal"></i>Users who want to share this book</h2>-->
+        <!--<div class="w3-container">-->
+            <!--{% for list_item in givers %}-->
+                <!--<div class="w3-card-4 w3-hover-shadow" style="width:100%; height:130px">-->
+                    <!--<div>-->
+                        <!--<img src="{{ list_item.user.profile.profilepic.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="height:120px">-->
+                        <!--<a href="{% url 'main:wall' list_item.user.username %}"><h1>{{ list_item.user.username }}</h1></a>-->
+                        <!--<p>{{ list_item.user.profile.bio }}</p>-->
+                        <!--{% if request.user != list_item.user %}-->
+                        <!--If u want to receive this book from {{ list_item.user.username }}<a href="{% url 'main:requestbook' list_item.id list_item.user.username book.id%}"><button type="submit" class="w3-button w3-theme">Send a request</button></a>-->
+                        <!--{% endif %}-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--{% endfor %}-->
+        <!--</div>-->
+      <!--</div>-->
+
+      <!--<div class="w3-container w3-card w3-white">-->
+        <!--<h2 class="w3-text-grey"><i class="fa w3-xxlarge w3-text-teal"></i>Users who want this book</h2>-->
+        <!--<div class="w3-container">-->
+            <!--{% for list_item in takers %}-->
+                <!--<div class="w3-card-4" style="width:100%; height:130px">-->
+                    <!--<div>-->
+                        <!--<img src="{{ list_item.user.profile.profilepic.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="height:120px">-->
+                        <!--<a href="{% url 'main:wall' list_item.user.username %}"><h1>{{ list_item.user.username }}</h1></a>-->
+                        <!--<p>{{ list_item.user.profile.bio }}</p>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--{% endfor %}-->
+        <!--</div>-->
+      <!--</div>-->
+
+    <!--&lt;!&ndash; End Right Column &ndash;&gt;-->
+    <!--</div>-->
+
+  <!--&lt;!&ndash; End Grid &ndash;&gt;-->
+  <!--</div>-->
+
+  <!--&lt;!&ndash; End Page Container &ndash;&gt;-->
+<!--</div>-->
+
+</body>
+
+{% endblock %}

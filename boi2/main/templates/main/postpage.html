@@ -1,0 +1,142 @@
+{% extends 'main/base.html' %}
+{% block title %}{{post.0.0.title}}{% endblock %}
+{% block body %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<style>
+body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+</style>
+<body class="w3-light-grey">
+
+<!-- w3-content defines a container for fixed size centered content,
+and is wrapped around the whole page content, except for the footer in this example -->
+<div class="w3-content" style="max-width:1400px">
+
+<!-- Header -->
+
+
+<!-- Grid -->
+<div class="w3-row">
+
+<!-- Blog entries -->
+<div class="w3-col l8 s12">
+  <!-- Blog entry -->
+  <div class="w3-card-4 w3-margin w3-white">
+    {% if post.0.0.cover %}<img src="{{post.0.0.cover.url}}" alt="Post Cover" style="width:100%">{% endif %}
+    <div class="w3-container">
+      <h3><b>{{post.0.0.title}}</b></h3>
+      <h5><span class="w3-opacity">{{post.0.0.creationDate}}</span></h5>
+    </div>
+
+    <div class="w3-container">
+      <p>{{post.0.0.text}}</p>
+      <div class="w3-row">
+        <div>
+          <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom" onclick="likefunk(this, {{post.0.0.id}})">{% if post.0.1 == 'True' %}<i class="fa fa-thumbs-down"></i>Unlike {{post.0.2}}{% else %}<i class="fa fa-thumbs-up"></i> Like {{post.0.2}}{% endif %} </button>
+        </div>
+      </div>
+      <div class="w3-row" style = "padding-bottom:2%;">
+          <textarea id = "commentfield" class="w3-border w3-padding" name="comment" placeholder="Write a comment" style="width:100%;" rows = "2"></textarea>
+          <button class="w3-button w3-theme" style = "float:right;" onclick="commentfunk(this, {{post.0.0.id}})"><i class="fa fa-pencil"></i>Comment</button>
+      </div>
+      <hr>
+      <div>
+        <div class="w3-col m4 w3-hide-small" style = "float:right;">
+          <p style = "float:right;"><span class="w3-padding-large"><b>Comments  </b> <span class="w3-tag" id = "commentno">{{comments|length}}</span></span></p>
+        </div>
+        <div id = "commentblock">
+        {% for comment in comments %}
+        <div class="w3-row">
+              <div>
+                <img class="w3-circle" src="{{comment.user.profile.profilepic.url}}" style="height:50px; width:50px; object-fit:cover;" alt="">
+                <h5 class="mt-0" style = "display:inline;">{{comment.user.username}}</h5>
+              </div>
+              <div class="media-body">{{comment.text}}</div>
+        </div>
+        <br>
+        {% endfor %}
+        </div>
+      </div>
+      <hr>
+    </div>
+  </div>
+  <hr>
+
+
+<!-- END BLOG ENTRIES -->
+</div>
+
+<!-- Introduction menu -->
+<div class="w3-col l4">
+  <!-- About Card -->
+  <div class="w3-card w3-margin w3-margin-top">
+  {% if post.0.0.user.profile.profilepic %}<img src="{{post.0.0.user.profile.profilepic.url}}" style="width:100%">{% endif %}
+    <div class="w3-container w3-white">
+      <h4><b>{{post.0.0.user.username}}</b></h4>
+      <p>{{post.0.0.user.profile.bio}}</p>
+    </div>
+  </div><hr>
+
+  <!-- Posts -->
+
+
+
+<!-- END Introduction Menu -->
+</div>
+
+<!-- END GRID -->
+</div><br>
+
+<!-- END w3-content -->
+</div>
+
+<script>
+    function likefunk(e, v){
+        var req = new XMLHttpRequest();
+        var ref = "/main/like/" + String(v) + "/";
+        req.open("POST", ref);
+        req.onload = function(){
+            var data = req.responseText;
+            e.innerHTML = String(data);
+        }
+        req.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        req.send("");
+    }
+
+    function commentfunk(e, v){
+        console.log("Clicked");
+        var req = new XMLHttpRequest();
+        var ref = "/main/comment/" + String(v) + "/";
+        var area = document.getElementById("commentfield");
+        var text = area.value;
+        console.log(text);
+        if(text != ""){
+            req.open("POST", ref);
+            req.onload = function(){
+                var data = JSON.parse(req.responseText);
+                console.log(data);
+                
+                var htmlstring = "<div class=\"w3-row\"><div><img class=\"w3-circle\" src=\"" + data[0] +"\" style=\"height:50px; width:50px; object-fit:cover;\" alt=\"\"><h5 class=\"mt-0\" style = \"display:inline;\">" + data[1] + "</h5></div><div class=\"media-body\">" + data[2] + "</div></div><br>";
+                
+                console.log(htmlstring);
+                
+                var el = document.getElementById("commentblock");
+                
+                el.innerHTML = htmlstring + el.innerHTML;
+                
+                document.getElementById("commentno").innerHTML = data[3];
+                
+            }
+            req.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+            req.send(text);
+            area.value = "";
+        }
+    }
+</script>
+
+</body>
+
+{% endblock %}

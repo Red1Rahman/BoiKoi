@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Template{% endblock %}</title>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}"/>
+</head>
+<body>
+
+
+<!-- Navbar -->
+<nav class="navbar w3-theme-d2">
+ <div class="container-fluid">
+  <a class="navbar-left w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+  <a class="navbar-brand "><a href="{% url 'main:home' %}" class="navbar-left w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i>BoiKoi</a></a>
+  <a href="{% url 'main:hub' %}" class="navbar-left w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Hub"><i class="fa fa-globe"></i></a>
+  <div class="w3-dropdown-hover w3-hide-small">
+    <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+      <a href="{% url 'main:authorlist' %}" class="w3-bar-item w3-button">Browse by Author</a>
+      <a href="{% url 'main:booklist' %}" class="w3-bar-item w3-button">Browse by Book</a>
+    </div>
+  </div>
+  <a href="{% url 'main:message' %}" class="navbar-left w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Messages"><i class="fa fa-envelope"></i></a>
+  <form class="w3-bar-item navbar-form navbar-left" role="search" method="POST" action="{% url 'main:search' %}">
+      {% csrf_token %}
+      <input type="text" class="form-control" name="searchReq" value="">
+      <button type="submit"><i class="fa fa-search"></i></button>
+  </form>
+  <a  href="{% url 'main:profilepage' user.username %}" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-white" title="My Account">
+    <img src="{{ request.user.profile.profilepic.url }}" class="w3-circle" style="height:30px;width:30px" alt="Avatar">
+  </a>
+  <a href="{% url 'main:logout' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right" title="Log Out"><i class="fa fa-power-off"></i></a>
+
+ </div>
+</nav>
+
+{% block body %}
+{% endblock %}
+
+</body>
+</html>

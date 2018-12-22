@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Template{% endblock %}</title>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}"/>
+    <script src="https://ajax.google.apis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!--Header-->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="'collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'main:home' %}">BoiKoi</a>
+        </div>
+
+        <!--Item-->
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="">
+                    <a href = "#">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"> Home
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-group" aria-hidden="true"> Friends
+                        </span>
+                    </a>
+                </li>
+            </ul>
+
+            <form class="navbar-form navbar-left" role="search" method="POST" action="{% url 'main:search' %}">
+                 {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" name="searchReq" value="">
+                </div>
+                <button type="submit" class="btn btn-default">
+                  <span span class="glyphicon glyphicon-search"></span>
+                </button>
+            </form>
+
+            <u1 class="nav navbar-nav navbar-right">
+                <li class="">
+                    <a href = "#">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true">Account
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{% url 'main:logout' %}">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"> Log-out
+                        </span>
+                    </a>
+                </li>
+            </u1>
+        </div>
+    </div>
+</nav>
+
+{% block body %}
+{% endblock %}
+</body>
+</html>

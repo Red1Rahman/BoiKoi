@@ -1,0 +1,185 @@
+{% extends 'main/base.html' %}
+{% block title %}Messages{% endblock %}
+{% block body %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link href='https://fonts.googleapis.com/css?family=RobotoDraft' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><style>
+html,body,h1,h2,h3,h4,h5 {font-family: "RobotoDraft", "Roboto", sans-serif}
+.w3-bar-block .w3-bar-item {padding: 16px}
+</style>
+
+<style>
+.boxbody {
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.chatcontainer {
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.chatdarker {
+    background-color: #ddd;
+}
+
+.chatcontainer::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.chatcontainer img {
+    float: left;
+    max-width: 75px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+
+.chatcontainer img.right {
+    float: right;
+    margin-left: 20px;
+    margin-right:0;
+}
+
+.time-right {
+    float: right;
+    color: #aaa;
+}
+
+.time-left {
+    float: left;
+    color: #999;
+}
+</style>
+
+<body>
+
+<!-- Side Navigation -->
+<nav class="w3-sidebar w3-bar-block w3-collapse w3-white w3-card" style="z-index:3;width:320px;" id="mySidebar">
+  <a id="myBtn" onclick="myFunc('Demo1')" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-inbox w3-margin-right"></i>Inbox ({{newmessages|length}})<i class="fa fa-caret-down w3-margin-left"></i></a>
+  <div id="Demo1" class="w3-hide">
+    {% for message in newmessages %}
+    <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="loadmessages({% if message.sender == request.user %}{{message.receiver.id}}{% elif message.receiver == request.user %}{{message.sender.id}}{% endif %})">
+      <div class="w3-container">
+        {% if message.sender == request.user %}  
+        <img class="w3-circle w3-margin-right" src="{{message.receiver.profile.profilepic.url}}" style="width:15%;"><span class="w3-opacity w3-large">{{message.receiver.username}}</span>
+        <p style="opacity:0.4;">Sent</p>  
+        {% elif message.receiver == request.user %}   
+        <img class="w3-circle w3-margin-right" src="{{message.sender.profile.profilepic.url}}" style="width:15%;"><span class="w3-opacity w3-large">{{message.sender.username}}</span>
+        <p style="opacity:0.4;">Received</p>  
+        {% endif %}  
+        <p>{{message.text}}</p>  
+      </div>
+    </a>
+    {% endfor %}  
+  </div>
+</nav>
+
+<div style = "width:22vw; float:right; margin:1%">
+    <h5><span style = "opacity:0.6;">Send a new message to</span> <span id = "tosendname" ></span></h5>
+    <form id = "sendform" action="" method="POST" enctype="multipart/form-data">{%csrf_token%}
+        <textarea id = "messagefield" class="w3-border w3-padding" name="message" placeholder="Write your message" style="width:100%;" rows = "15"></textarea>
+        <button type="submit" class="w3-button w3-theme" style = "background-color: darkgray;"> Send</button>
+    </form>    
+</div>    
+
+
+<div class = "" style = "width:100vw;">
+    <div class="w3-main boxbody" style="  margin-left:320px;">
+        <h4 style = "opacity:0.65;">Messages with <span id = "participant"></span></h4>
+
+      <div id = "chatsection" style="height:93vh; overflow-y: scroll;">
+      </div>      
+    </div>
+</div>
+    
+
+
+<script>
+  var openInbox = document.getElementById("myBtn");
+  openInbox.click();
+
+  function w3_open() {
+      document.getElementById("mySidebar").style.display = "block";
+      document.getElementById("myOverlay").style.display = "block";
+  }
+  function w3_close() {
+      document.getElementById("mySidebar").style.display = "none";
+      document.getElementById("myOverlay").style.display = "none";
+  }
+
+  function myFunc(id) {
+      var x = document.getElementById(id);
+      if (x.className.indexOf("w3-show") == -1) {
+          x.className += " w3-show";
+          x.previousElementSibling.className += " w3-grey";
+      } else {
+          x.className = x.className.replace(" w3-show", "");
+          x.previousElementSibling.className =
+          x.previousElementSibling.className.replace(" w3-grey", "");
+      }
+  }
+
+  function loadmessages(v){
+      var req = new XMLHttpRequest();
+      var ref = "/main/loadmessage/" + String(v) + "/";
+      //alert(ref);
+      req.open("POST", ref);
+      req.onload = function(){
+          var data = JSON.parse(req.responseText);
+          
+          var messagelist = data.messagelist;
+          var mdp = data.user1dp;
+          var tdp = data.user2dp;
+          
+          console.log(messagelist);
+          
+          var htmlstring = "";
+          var i;
+          for(i = 0; i < messagelist.length; i++){
+              if(messagelist[i].mode == "received"){
+                  htmlstring += "<div class=\"chatcontainer\"><img src=\""+ tdp +"\" alt=\"Avatar\" style=\"width:100%;\"><p>"+ messagelist[i].text +"</p><span class=\"time-right\">"+ messagelist[i].time +"</span></div>";
+              }
+              else if(messagelist[i].mode == "sent"){
+                  htmlstring += "<div class=\"chatcontainer chatdarker\"><img src=\""+ mdp +"\" alt=\"Avatar\" class=\"right\" style=\"width:100%;\"><p>"+ messagelist[i].text +"</p><span class=\"time-left\">"+ messagelist[i].time +"</span></div>";
+              }
+          }
+          
+          //console.log(htmlstring);
+          
+          var el = document.getElementById("chatsection");
+          el.innerHTML = htmlstring;
+          el.scrollTop = el.scrollHeight;
+          
+          var par = document.getElementById("participant");
+          par.innerHTML = data.participant;
+          
+          var par = document.getElementById("tosendname");
+          par.innerHTML = data.participant;
+          
+          var sendaction = "/main/postmessage/" + data.userid + "/";
+          var form = document.getElementById("sendform")
+          form.action = sendaction;
+          
+      }
+      req.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+      req.send("");
+  }
+    
+  loadmessages({% if newmessages.0.sender == request.user %}{{newmessages.0.receiver.id}}{% elif newmessages.0.receiver == request.user %}{{newmessages.0.sender.id}}{% endif %});    
+</script>
+
+<!--script>
+var openTab = document.getElementById("firstTab");
+openTab.click();
+</script-->
+
+</body>
+</html>
+ {% endblock %}

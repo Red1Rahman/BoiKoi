@@ -1,0 +1,60 @@
+{% extends 'main/base.html' %}
+{% block title %}Search Results{% endblock %}
+{% block body %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+{% if usermatch or bookmatch or postmatch %}
+    <div class="w3-container" style="overflow-y:scroll">
+    <h2>Search Result</h2>
+    {% if bookmatch %}
+        <h2>Book Matches Found</h2>
+        {% for book in bookmatch %}
+            <a href="{% url 'main:book' book.id %}" style="text-decoration:none">
+                <div class="w3-card-4 w3-hover-shadow" style="width:100%; height:100px">
+                    <img src="{{ book.cover.url }}" alt="Cover" class="w3-left w3-circle w3-margin-right"style=" width:10px; white-space: pre-wrap; ">
+                    <div class="w3-container w3-center">
+                        <h1>{{ book.name }}</h1>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    {% endif %}
+    {% if usermatch %}
+        <h1>User Matches Found</h1>
+        {% for profile1 in usermatch %}
+            <a href="{% url 'main:wall' profile1.user.username %}" style="text-decoration:none">
+                <div class="w3-card-4 w3-hover-shadow" style="width:50%; height:130px">
+                    <div>
+                        <img src="{{ profile1.profilepic.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="height:120px">
+                        <h1>{{ profile1.user.username }}</h1>
+                        <p>{{ profile1.email }}</p>
+                    </div>
+
+                </div>
+            </a>
+        {% endfor %}
+    {% endif %}
+    {% if postmatch %}
+        <h1>Post Matches Found</h1>
+        {% for postitem in postmatch %}
+            <div class="w3-container w3-card w3-light-grey w3-round w3-margin"><br>
+                <img src={{postitem.user.profile.profilepic.url}} alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+                <span class="w3-right w3-opacity">{{postitem.creationDate}}</span>
+                <h2>{{postitem.user.username}}</h2>
+                <hr class="w3-clear">
+                <h3>{{postitem.title}}</h3>
+                <p>{{postitem.text}}</p>
+                <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</button>
+                <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% else %}
+    <h1> Search came up empty</h1>
+{% endif %}
+
+
+{% endblock %}

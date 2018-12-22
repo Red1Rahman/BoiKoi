@@ -1,0 +1,45 @@
+.navbar{
+    border-radius: 0;
+}
+
+.navbar-brand{
+    font-family: 'Satisfy', cursive;
+}
+a.card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* On mouse-over, add a deeper shadow */
+a.card:hover {
+    box-shadow: 0 16px 32px 0 rgba(0,0,0,0.2);
+}
+
+a:link {
+    color: black;
+    background-color: transparent;
+    text-decoration: none;
+}
+a:hover {
+    color: red;
+    background-color: transparent;
+    text-decoration: none;
+}
+a:active {
+    color: yellow;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+/* Add some padding inside the card container */
+div.card-img-overlay {
+    padding: 2px 16px;
+}
+
+h5{
+    font-size: 16px;
+    font-weight: bold;
+}
